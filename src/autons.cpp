@@ -12,20 +12,20 @@ void default_constants(){
   // Each constant set is in the form of (maxVoltage, kP, kI, kD, startI).
   // SUPER LOW constants for new robot - start conservative and tune up
   chassis.set_drive_constants(
-    8,          // slew
-    0.6,       // P  (lower acceleration)
+    12,          // slew
+    0.55,      // P  (lower acceleration)
     0.0002,     // I  (stronger “finish the target” force)
-    0.25,       // D  (much weaker braking)
+    0.26,       // D  (much weaker braking)
     0           // start I
 );
-  chassis.set_heading_constants(6, .3, 0, .7, 0);  // Reduced: 0.2 kP, 0.5 kD
-  chassis.set_turn_constants(8, .2, 0, 1.2, 15);  // Reduced: 6V max, 0.15 kP, 1.0 kD
-
+  chassis.set_heading_constants(6, .3, 0, 1, 0);  // Reduced: 0.2 kP, 0.5 kD
+  chassis.set_turn_constants(8, .2, 0, 1.26, 15);  // Reduced: 6V max, 0.15 kP, 1.0 kD  
+  chassis.set_swing_constants(12, .4, 0, 1.5, 15);  // Higher voltage and gains for swing
   // Each exit condition set is in the form of (settle_error, settle_time, timeout).
   // Looser settle conditions for new robot (more forgiving)
-  chassis.set_drive_exit_conditions(1.8, 60, 2500);  // 5" error, 150ms settle, 4s timeout
-  chassis.set_turn_exit_conditions(3, 100, 2000);  // 8° error, 150ms settle, 4s timeout
-  chassis.set_swing_exit_conditions(5, 60, 4000);  // 5° error, 150ms settle, 4s timeout
+  chassis.set_drive_exit_conditions(1.8, 40, 2500);  // 5" error, 150ms settle, 4s timeout
+  chassis.set_turn_exit_conditions(3, 40, 2000);  // 8° error, 150ms settle, 4s timeout
+  chassis.set_swing_exit_conditions(3, 80, 4000);  // 5° error, 150ms settle, 4s timeout
 }
 
 /**
@@ -216,12 +216,8 @@ Intake1.spin(fwd,100,pct);
 }
 
 void testify(){
-  chassis.set_coordinates(0,0,0);
-  chassis.heading_max_voltage = 3;
-  chassis.drive_to_point(13,10);
-  default_constants();
-  chassis.turn_to_point(13,19);
-  chassis.drive_to_point(13,-25);
+  chassis.drive_distance(24);
+  chassis.drive_distance(-24);
 
 }
 void femboysolo(){
@@ -308,54 +304,51 @@ Intake1.spin(fwd,100,pct);
 
 
 void right_side_auton(){
-  chassis.drive_distance(13);
-  Intake1.spin(fwd, 100, pct);
-  Intake2.stop();
-  Intake2.setStopping(hold);
-  chassis.turn_to_angle(30);
-  chassis.drive_max_voltage = 4;
-  chassis.drive_distance(14);
-  wait(0.5, sec);
-  chassis.turn_to_angle(135);
-  Intake1.stop();
-  Intake2.stop();
-  chassis.turn_max_voltage=6;
-  chassis.drive_max_voltage = 6;
-  chassis.drive_distance(35);
-  chassis.turn_to_angle(180);
-  chassis.drive_distance(-20);
-  // intake forward for 2 seconds
-  Intake1.spin(fwd, 100, pct);
-  Intake2.spin(fwd, 100, pct);
-  wait(1.5, sec);
-  Intake1.stop();
-  Intake2.stop();
-  Intake2.setStopping(hold);
-  chassis.turn_to_angle(180);
-  // Activate pneumatics
-  Solenoid.set(true);
-  Intake1.spin(fwd, 100, pct);
-  chassis.drive_max_voltage = 6;
-  //drive to the matchload at 50% speed
-  chassis.drive_distance(29.5);
-  chassis.turn_to_angle(180);
-  chassis.drive_max_voltage = 8;
-  wait(0.4,sec);
-  Intake1.stop();
   
-  //drive back
-  chassis.drive_distance(-29.5);
-  // Deactivate pneumatics
-  Solenoid.set(false);
-  Intake1.spin(fwd, 100, pct);
-  Intake2.spin(fwd, 100, pct);
-  wait(1.5,sec);
-  chassis.drive_distance(10);
-  
-  chassis.drive_distance(-10);
-  
-  chassis.drive_distance(5);
+ chassis.drive_distance(30);
 
+  Solenoid2.set(false);
+
+ //Matchloader Pt.1
+ Solenoid.set(true);
+ chassis.turn_to_angle(90);
+ Intake1.spin(fwd, 100, pct);
+ Intake2.spin(fwd,100,pct);
+
+  chassis.drive_max_voltage = 8;
+  chassis.drive_timeout = 900;
+  chassis.drive_distance(12);
+  default_constants();
+  wait(0.15,sec);
+ chassis.turn_to_angle(90);
+ //chassis.drive_max_voltage= 6;
+ chassis.drive_distance(-28.5);
+ Intake1.spin(fwd, 100, pct);
+ Intake2.spin(fwd, 100, pct);
+
+ Intake3.spin(fwd, 100, pct);
+ Solenoid.set(false);
+ 
+ wait(1.4,sec);
+ Intake3.stop();
+chassis.set_coordinates(0,0,90);
+Intake1.spin(fwd, 100, pct);
+Intake2.spin(fwd,50,pct);
+ chassis.turn_to_angle(220);
+ chassis.drive_distance(13);
+ chassis.drive_max_voltage=6;
+ chassis.drive_distance(8);
+ default_constants();
+ Intake1.stop();
+ Intake2.stop();
+ chassis.drive_distance(10);
+ Intake1.spin(reverse, 100, pct);
+ Intake2.spin(reverse,100,pct);
+ Intake3.spin(reverse,100,pct);
+ wait(1.3, sec);
+ chassis.drive_distance(-32);
+ chassis.turn_to_angle(90);
+ chassis.drive_distance(-30);
 }
 
 
@@ -376,7 +369,7 @@ void right_side_auton(){
 
 void right_side_dumbass4ball_auton(){
 
- chassis.drive_distance(28.75);
+ chassis.drive_distance(31.5);
 
   Solenoid2.set(false);
 
@@ -384,90 +377,34 @@ void right_side_dumbass4ball_auton(){
  Solenoid.set(true);
  chassis.turn_to_angle(90);
  Intake1.spin(fwd, 100, pct);
+ Intake2.spin(fwd,100,pct);
 
-
- //chassis.drive_max_voltage = 4;
- //Matchloader Pt.2
-  // Drive forward with collision detection - drive at full speed until hitting something, then back up 1 inch
-  // {
-  //   float max_voltage = 6.0; // Full voltage
-  //   float target_distance = 8.5; // Target distance in inches
-  //   float collision_velocity_threshold = 5.0; // RPM threshold - if velocity drops below this, consider it a collision
-  //   float collision_check_time = 60; // ms - how long velocity must be low to confirm collision
-  //   float start_position = (chassis.get_left_position_in() + chassis.get_right_position_in()) / 2.0;
-  //   float current_position = start_position;
-  //   bool collision_detected = false;
-  //   int low_velocity_count = 0;
-  //   int start_time = Brain.timer(msec);
-  //   int timeout = 800; // 3 second timeout
-    
-  //   // Drive forward at full speed
-  //   while (!collision_detected && (Brain.timer(msec) - start_time) < timeout) {
-  //     current_position = (chassis.get_left_position_in() + chassis.get_right_position_in()) / 2.0;
-  //     float distance_traveled = current_position - start_position;
-      
-  //     // Check if we've reached the target distance
-  //     if (distance_traveled >= target_distance) {
-  //       break;
-  //     }
-      
-  //     // Check motor velocities for collision detection
-  //     float left_vel = (LeftFront.velocity(rpm) + LeftMiddle.velocity(rpm) + LeftBack.velocity(rpm)) / 3.0;
-  //     float right_vel = (RightFront.velocity(rpm) + RightMiddle.velocity(rpm) + RightBack.velocity(rpm)) / 3.0;
-  //     float avg_velocity = (left_vel + right_vel) / 2.0;
-      
-  //     // If velocity is very low while trying to drive, we're hitting something
-  //     if (fabs(avg_velocity) < collision_velocity_threshold) {
-  //       low_velocity_count++;
-  //       if (low_velocity_count > (collision_check_time / 10)) { // Check for collision_check_time ms
-  //         collision_detected = true;
-  //         break;
-  //       }
-  //     } else {
-  //       low_velocity_count = 0; // Reset counter if velocity recovers
-  //     }
-      
-  //     // Drive forward at full voltage
-  //     chassis.drive_with_voltage(max_voltage, max_voltage);
-  //     wait(10, msec);
-  //   }
-    
-  //   // Stop motors
-  //   chassis.drive_stop(hold);
-  //   wait(50, msec);
-    
-  //   // If collision detected, drive back 1 inch
-  //   if (collision_detected) {
-  //   }
-  // }
-
-  chassis.drive_max_voltage = 6;
-  chassis.drive_timeout = 1300;
-  chassis.drive_distance(10);
+  chassis.drive_max_voltage = 8;
+  chassis.drive_timeout = 1000;
+  chassis.drive_distance(13);
   default_constants();
-  wait(0.25,sec);
+  wait(0.05,sec);
  chassis.turn_to_angle(90);
  //chassis.drive_max_voltage= 6;
  Intake1.stop();
- chassis.drive_distance(-29.5);
+ chassis.drive_distance(-28.5);
  Intake1.spin(fwd, 100, pct);
  Intake2.spin(fwd, 100, pct);
 
+ Intake3.spin(fwd, 100, pct);
  Solenoid.set(false);
  
- wait(1.8,sec);
+ wait(1.4,sec);
  Intake2.stop();
  Intake1.stop();
  chassis.drive_distance(5);
  chassis.set_coordinates(0,0,0);
- chassis.drive_to_point(13,3);
+ chassis.drive_to_point(12,3);
  
- Solenoid2.set(true);
-  
   default_constants();
   chassis.drive_max_voltage=7;
-  chassis.turn_to_point(13,19);
-  chassis.drive_to_point(13,-26);
+  chassis.turn_to_point(12,19);
+  chassis.drive_to_point(12,-26);
   
  chassis.drive_stop(hold);
 
@@ -744,5 +681,60 @@ void left_side_dumbass4ball_auton(){
 
 
 
+
+}
+void JBCsolo(){
+ 
+ chassis.drive_distance(30);
+
+  Solenoid2.set(false);
+
+ //Matchloader Pt.1
+ Solenoid.set(true);
+ chassis.turn_to_angle(90);
+ Intake1.spin(fwd, 100, pct);
+ Intake2.spin(fwd,100,pct);
+
+  chassis.drive_timeout = 800;
+  chassis.drive_distance(12);
+  default_constants();
+  wait(0.15,sec);
+ chassis.turn_to_angle(90);
+ //chassis.drive_max_voltage= 6;
+ 
+ chassis.drive_distance(-28.5);
+ Intake1.spin(fwd, 100, pct);
+ Intake2.spin(fwd, 100, pct);
+
+ Intake3.spin(fwd, 100, pct);
+ Solenoid.set(false);
+ 
+ wait(1,sec);
+ Intake3.stop();
+chassis.set_coordinates(0,0,90);
+Intake1.spin(fwd, 100, pct);
+Intake2.spin(fwd,50,pct);
+chassis.drive_distance(18);
+
+ chassis.turn_to_angle(225);
+ chassis.drive_distance(28);
+ chassis.drive_distance(8);
+ chassis.turn_to_angle(180);
+ chassis.drive_distance(48);
+ chassis.turn_to_angle(135);
+ 
+ Intake3.spin(fwd,100,pct);
+ chassis.drive_distance(-14);
+ Intake2.spin(fwd,100,pct);
+ Intake1.spin(fwd,100,pct);
+ Intake3.stop();
+ chassis.drive_distance(44);
+ Solenoid.set(true);
+ 
+ chassis.turn_to_angle(90);
+ chassis.drive_distance(12);
+ wait(0.3,sec);
+ chassis.drive_distance(-28.5);
+ Intake3.spin(fwd,100,pct);
 
 }

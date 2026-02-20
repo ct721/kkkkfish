@@ -22,3 +22,4 @@ void right_side_dumbass4ball_auton();
 void femboysolo();
 void left_side_sped_auton();
 void left_side_dumbass4ball_auton();
+void JBCsolo();

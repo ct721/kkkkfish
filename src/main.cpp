@@ -50,7 +50,7 @@ motor_group(LeftFront, LeftMiddle, LeftBack),
 motor_group(RightFront, RightMiddle, RightBack),
 
 //Specify the PORT NUMBER of your inertial sensor, in PORT format (i.e. "PORT1", not simply "1"):
-PORT14,
+PORT21,
 
 //Input your wheel diameter. (4" omnis are actually closer to 4.125"):
 3.25,
@@ -62,7 +62,7 @@ PORT14,
 
 //Gyro scale, this is what your gyro reads when you spin the robot 360 degrees.
 //For most cases 360 will do fine here, but this scale factor can be very helpful when precision is necessary.
-358.8,
+355,
 
 /*---------------------------------------------------------------------------*/
 /*                                  PAUSE!                                   */
@@ -104,8 +104,8 @@ PORT9,
 -5
 
 );
-// dumb4right 2 left 1 solo 0
-int current_auton_selection = 5;
+// dumb4right 2 left 1 solo 5 femrugt 6
+int current_auton_selection =5;
 bool auto_started = false;
 // Driver state mirrored from Python config
 bool is_tank_drive = true; // Set tank drive as default
@@ -113,11 +113,13 @@ bool is_reverse_arcade = false;
 int drive_speed = 100;
 bool pneumatics_extended = false; // placeholder, no direct solenoid mapped
 bool pneumatics2_extended = false; // second pneumatics state
+bool pneumatics3_extended = false; // third solenoid state
 
 bool prev_toggle_combo = false;
 bool prev_speed_toggle = false;
 bool prev_pneumatics_press = false;
 bool prev_pneumatics2_press = false;
+bool prev_solenoid3_press = false;
 bool prev_reverse_arcade_combo = false;
 
 /**
@@ -133,7 +135,7 @@ void pre_auton() {
   
   // IMMEDIATELY retract pneumatics when program starts
   Solenoid.set(false);        // Force Port H pneumatics retracted
-  Solenoid2.set(true);        // Force Port A pneumatics ON by defafult
+  Solenoid2.set(false);        // Force Port A pneumatics ON by defafult
   wait(50, msec);             // Brief delay to ensure command processes
   
   // Calibrate gyro sensor
@@ -147,15 +149,13 @@ void pre_auton() {
   default_constants();
   
   // Initialize pneumatics to retracted position (safety default)
-  Solenoid.set(false);        // L2 pneumatics - retracted
-  Solenoid2.set(true);        // A pneumatics - ON by default
+  Solenoid.set(false);        // A pneumatics - ON by default
   pneumatics_extended = false;
-  pneumatics2_extended = true;
   
   // Ensure pneumatics are fully retracted with a small delay
   wait(100, msec);
   Solenoid.set(false);        // Double-check Port H pneumatics retracted
-  Solenoid2.set(true);        // Double-check Port A pneumatics ON
+  Solenoid2.set(false);        // Double-check Port A pneumatics ON
 
   while(!auto_started){
     Brain.Screen.clearScreen();
@@ -244,13 +244,13 @@ void autonomous(void) {
       testify();
       break;
     case 5:
-    chassis.drive_distance(7);
+    JBCsolo();
       break;
     case 6:
-      tank_odom_test();
+      right_side_auton();
       break;
     case 7:
-      holonomic_odom_test();
+    chassis.left_swing_to_angle(90);
       break;
  }
 }
@@ -270,12 +270,12 @@ void usercontrol(void) {
   chassis.set_auton_mode(false);
   
   // Set drive motors to hold mode for user control
-  LeftFront.setStopping(hold);
-  LeftMiddle.setStopping(hold);
-  LeftBack.setStopping(hold);
-  RightFront.setStopping(hold);
-  RightMiddle.setStopping(hold);
-  RightBack.setStopping(hold);
+  LeftFront.setStopping(coast);
+  LeftMiddle.setStopping(coast);
+  LeftBack.setStopping(coast);
+  RightFront.setStopping(coast);
+  RightMiddle.setStopping(coast);
+  RightBack.setStopping(coast);
   
   // Reset pneumatics when entering user control
   Solenoid.set(false);        // L2 pneumatics - retracted
@@ -302,35 +302,41 @@ void usercontrol(void) {
       Intake2.spin(fwd, 100, pct);
       Intake3.spin(fwd,100,pct);
       Intake3.setStopping(coast);
-      Solenoid3.set(false);
     }
+    
     else if (Controller1.ButtonLeft.pressing()){
       Intake1.spin(fwd, 100, pct);
-      Intake2.spin(fwd, 100, pct);
+      Intake2.spin(fwd, 80, pct);
+      Intake3.spin(reverse,100,pct);
+      Intake3.setStopping(coast);
+      Solenoid3.set(true);
+      // Activate third solenoid while holding Left
+    }
+    else if (Controller1.ButtonRight.pressing()){
+      Intake1.spin(reverse, 40, pct);
+      Intake2.spin(reverse, 70, pct);
       Intake3.spin(reverse,100,pct);
       Intake3.setStopping(coast);
       // Activate third solenoid while holding Left
-      Solenoid3.set(true);
     }
     else if (Controller1.ButtonR2.pressing()){
       // intake1 forward only
       Intake1.spin(fwd, 100, pct);
       Intake2.spin(fwd,100,pct);
       Intake3.stop();
-      Intake3.setStopping(hold);
-      Solenoid3.set(false);
+      Intake3.setStopping(hold);\
     } else if (Controller1.ButtonL1.pressing()){
-      Intake1.spin(reverse, 100, pct);
+      Intake1.spin(reverse, 60, pct);
       Intake2.spin(reverse, 100, pct);
       Intake3.spin(reverse, 100, pct);
       Intake3.setStopping(coast);
-      Solenoid3.set(false);
     } else {
       Intake1.stop();
       Intake2.stop();
       Intake3.stop();
       Intake3.setStopping(coast);
-      Solenoid3.set(false);
+      // Respect Y toggle state when no intake buttons pressed
+      Solenoid3.set(pneumatics3_extended);
     }
 
     // === Drive Mode Toggle (Y + Right) ===
@@ -494,6 +500,16 @@ void usercontrol(void) {
       if (pneumatics_extended) Brain.Screen.print("Pneumatics: Extended"); else Brain.Screen.print("Pneumatics: Retracted");
     }
     prev_pneumatics_press = pneu_press;
+    
+    // === Solenoid 3 Toggle (Y) ===
+    bool solenoid3_press = Controller1.ButtonY.pressing();
+    if (solenoid3_press && !prev_solenoid3_press){
+      pneumatics3_extended = !pneumatics3_extended;
+      Solenoid3.set(pneumatics3_extended);
+      Brain.Screen.clearScreen();
+      if (pneumatics3_extended) Brain.Screen.print("Solenoid 3: Extended"); else Brain.Screen.print("Solenoid 3: Retracted");
+    }
+    prev_solenoid3_press = solenoid3_press;
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
