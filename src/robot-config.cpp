@@ -26,7 +26,7 @@ motor Intake2 = motor(PORT8, ratio6_1, true);
 motor Intake3 = motor(PORT7, ratio6_1, true);  // top motor
 
 // Inertial sensor
-inertial InertialSensor = inertial(PORT14);
+inertial InertialSensor = inertial(PORT21);
 
 // Pneumatics - solenoid on brain three-wire port H
 digital_out Solenoid = digital_out(Brain.ThreeWirePort.D);

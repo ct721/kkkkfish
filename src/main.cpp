@@ -105,7 +105,7 @@ PORT9,
 
 );
 // dumb4right 2 left 1 solo 5 femrugt 6
-int current_auton_selection =5;
+int current_auton_selection = 3;
 bool auto_started = false;
 // Driver state mirrored from Python config
 bool is_tank_drive = true; // Set tank drive as default
@@ -305,9 +305,9 @@ void usercontrol(void) {
     }
     
     else if (Controller1.ButtonLeft.pressing()){
-      Intake1.spin(fwd, 100, pct);
-      Intake2.spin(fwd, 80, pct);
-      Intake3.spin(reverse,100,pct);
+      Intake1.spin(fwd, 60, pct);
+      Intake2.spin(fwd, 60, pct);
+      Intake3.spin(reverse,60,pct);
       Intake3.setStopping(coast);
       Solenoid3.set(true);
       // Activate third solenoid while holding Left

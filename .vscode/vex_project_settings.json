@@ -1,10 +1,10 @@
 {
 	"project": {
-		"name": "JBCsolo",
+		"name": "67si",
 		"slot": 1,
 		"description": "Empty V5 C++ Project",
 		"platform": "V5",
-		"creationDate": "Fri, 20 Feb 2026 00:05:02 GMT",
+		"creationDate": "Sun, 22 Feb 2026 04:17:59 GMT",
 		"language": "cpp",
 		"sdkVersion": "V5_20240802_15_00_00",
 		"cpp": {
@@ -12,7 +12,7 @@
 		}
 	},
 	"extension": {
-		"version": "0.8.2026020401",
+		"version": "0.8.2026011200",
 		"json": 1
 	}
 }
