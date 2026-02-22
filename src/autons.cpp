@@ -411,6 +411,7 @@ void right_side_dumbass4ball_auton(){
 
 
 void skills_auton(){
+  //new auton (?)
   chassis.drive_distance(27);
   Solenoid2.set(false);
 
@@ -511,7 +512,6 @@ void skills_auton(){
  Intake3.stop();
 chassis.set_coordinates(0,0,90);
 */
-
 }
 
 void left_side_sped_auton(){
