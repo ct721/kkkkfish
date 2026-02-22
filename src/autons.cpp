@@ -412,21 +412,21 @@ void right_side_dumbass4ball_auton(){
 
 void skills_auton(){
   //new auton (?)
-  chassis.drive_distance(27);
+  chassis.drive_distance(27); //used to be 25.5 i think?
   Solenoid2.set(false);
 
  //Matchloader #1
  Solenoid.set(true);
- chassis.turn_to_angle(90);
+ chassis.turn_to_angle(90); //used to be 75
  Intake1.spin(fwd, 100, pct);
  Intake2.spin(fwd,100,pct);
  chassis.drive_timeout = 800;
- chassis.drive_max_voltage = 3;
+ chassis.drive_max_voltage = 6;
  chassis.drive_distance(11);
  wait(0.92, sec);
  default_constants();
  wait(0.15,sec);
- chassis.drive_max_voltage = 3;
+ chassis.drive_max_voltage = 6;
  chassis.turn_to_angle(90);
  
  //Get ready for transition from 1st matchload to wall 
@@ -440,9 +440,9 @@ void skills_auton(){
  //1st -> 2nd Matchload Right Wall
  chassis.drive_distance(84);
  chassis.turn_to_angle(0);
- chassis.drive_distance(18);
+ chassis.drive_distance(18); //check this maybe increase to 20 or 20 smth
  chassis.turn_to_angle(-90);
- chassis.drive_distance(-21);
+ chassis.drive_distance(-20);
 
  //Scoring the blocks from 1st matchload to long goal in top right
  Intake1.spin(fwd, 100, pct);
@@ -458,12 +458,12 @@ void skills_auton(){
  Intake1.spin(fwd, 100, pct);
  Intake2.spin(fwd, 100, pct);
  chassis.drive_distance(1);
- //hassis.turn_to_angle(-75);
- chassis.drive_max_voltage = 3;
+ //chassis.turn_to_angle(-75);
+ chassis.drive_max_voltage = 6;
  chassis.drive_distance(26.3);
  wait(0.94, sec);
  chassis.turn_to_angle(-90);
- chassis.drive_max_voltage = 3;
+ chassis.drive_max_voltage = 6;
 
  //Scoring 2nd matchload blocks in long goal
  chassis.drive_distance(-25);
@@ -490,7 +490,7 @@ void skills_auton(){
  Intake2.spin(fwd, 100, pct);
  wait(0.92, sec);
 
- //
+ 
  chassis.drive_distance(-10);
  chassis.turn_to_angle(0);
  /*
