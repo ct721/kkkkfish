@@ -412,7 +412,7 @@ void right_side_dumbass4ball_auton(){
 
 void skills_auton(){
   //new auton (?)
-  chassis.drive_distance(27); //used to be 25.5 i think?
+  chassis.drive_distance(29); //used to be 25.5 i think?
   Solenoid2.set(false);
 
  //Matchloader #1
@@ -422,8 +422,9 @@ void skills_auton(){
  Intake2.spin(fwd,100,pct);
  chassis.drive_timeout = 800;
  chassis.drive_max_voltage = 6;
- chassis.drive_distance(11);
- wait(0.92, sec);
+ wait(0.2, sec);
+ chassis.drive_distance(15.1);
+ wait(1, sec); 
  default_constants();
  wait(0.15,sec);
  chassis.drive_max_voltage = 6;
@@ -431,25 +432,35 @@ void skills_auton(){
  
  //Get ready for transition from 1st matchload to wall 
  chassis.drive_distance(-17);
- chassis.turn_to_angle(180);
- chassis.drive_distance(15);
- chassis.turn_to_angle(-90);
+ Solenoid.set(false);
+ chassis.turn_to_angle(0); //180
+ chassis.drive_distance(-15);
+ chassis.turn_to_angle(101);
  Intake1.stop();
  Intake2.stop();
 
  //1st -> 2nd Matchload Right Wall
- chassis.drive_distance(84);
+ Solenoid2.set(true);
+ chassis.drive_max_voltage = 4.5;
+ chassis.swing_max_voltage = 8;
+ chassis.drive_distance(-72); //84
+ chassis.swing_timeout = 1000; chassis.right_swing_to_angle(265);
+ 
+ /*
  chassis.turn_to_angle(0);
- chassis.drive_distance(18); //check this maybe increase to 20 or 20 smth
+ chassis.drive_distance(16.7); //check this maybe increase to 20 or 20 smth
  chassis.turn_to_angle(-90);
- chassis.drive_distance(-20);
+ chassis.drive_distance(-23);
+ */
 
  //Scoring the blocks from 1st matchload to long goal in top right
  Intake1.spin(fwd, 100, pct);
  Intake2.spin(fwd, 100, pct);
  Intake3.spin(fwd, 100, pct);
- wait(1.1, sec);
+ chassis.drive_distance(-10, 268, 12, 1, 1, 50, 1750);
  Intake1.stop();
+ Intake2.stop();
+ Intake3.stop();
  chassis.drive_distance(1);
  chassis.turn_to_angle(-90);
  
@@ -460,15 +471,17 @@ void skills_auton(){
  chassis.drive_distance(1);
  //chassis.turn_to_angle(-75);
  chassis.drive_max_voltage = 6;
- chassis.drive_distance(26.3);
- wait(0.94, sec);
+ chassis.drive_distance(31, -90, 5, 1.5);
+ wait(1.2, sec);
  chassis.turn_to_angle(-90);
  chassis.drive_max_voltage = 6;
 
  //Scoring 2nd matchload blocks in long goal
- chassis.drive_distance(-25);
+ chassis.drive_distance(-28);
+ Solenoid.set(false);
+ wait(0.2, sec);
  Intake3.spin(fwd, 100, pct);
- wait(0.9, sec);
+ chassis.drive_distance(-10, 90, 12, 1, 1, 50, 1750);
  Intake1.stop();
  Intake2.stop();
  Intake3.stop();
@@ -476,42 +489,68 @@ void skills_auton(){
  chassis.turn_to_angle(180);
 
  //2nd -> 3rd Matchload Top Wall
- chassis.drive_distance(43);
- chassis.turn_to_angle(180);
- chassis.drive_distance(50);
+ chassis.drive_distance(94.5, 180, 7, 0.5, 1.8, 40, 2750);
  chassis.turn_to_angle(-90);
 
  //Matchload #3
  Intake1.spin(fwd, 100, pct);
  Intake2.spin(fwd, 100, pct);
  Solenoid.set(true);
- chassis.drive_distance(19);
+ wait(0.1, sec);
+ chassis.drive_distance(24, -90, 5, 0.5); //always have it 0.5 if it drives straight
  Intake1.spin(fwd, 100, pct);
  Intake2.spin(fwd, 100, pct);
- wait(0.92, sec);
-
+ wait(0.95, sec);
+ Intake1.stop();
+ Intake2.stop();
  
  chassis.drive_distance(-10);
+ Solenoid.set(false);
  chassis.turn_to_angle(0);
- /*
- chassis.drive_distance(20);
- chassis.turn_to_angle(90);
- chassis.drive_distance(86.9);
- chassis.turn_to_angle(180);
- chassis.drive_distance(17);
- chassis.turn_to_angle(90);
- chassis.drive_distance(19);
+ chassis.drive_timeout = 1000;
+ 
+ chassis.drive_distance(17); //17
+ chassis.turn_to_angle(282); //284
+ chassis.drive_max_voltage = 4.5;
+ chassis.swing_max_voltage = 8;
+ chassis.drive_distance(-72, 287.2, 4.5, 0.5, 1.8, 40, 2750); //287
+ chassis.swing_timeout = 1500; chassis.right_swing_to_angle(90);
+ Intake1.spin(fwd, 100, pct);
+ Intake2.spin(fwd, 100, pct);
  Intake3.spin(fwd, 100, pct);
- wait(1,sec);
+ chassis.drive_distance(-10, -90, 12, 1, 1, 50, 1750);
  Intake3.stop();
+
+ //Matchload #4
  Solenoid.set(true);
  chassis.turn_to_angle(90);
- chassis.drive_distance(20);
+ chassis.drive_distance(26, 92, 5, 0.75);
+ Intake1.spin(fwd, 100, pct);
+ Intake2.spin(fwd, 100, pct);
+ wait(1,sec);
+ chassis.drive_distance(-26, -90, 12, 1, 1, 50, 1750);
+ Intake1.spin(fwd, 100, pct);
+ Intake2.spin(fwd, 100, pct);
+ Intake3.spin(fwd, 100, pct);
+ wait(0.95, sec);
+ //chassis.drive_distance(-10, -90, 12, 1, 1, 50, 1750);
+ Intake1.stop();
+ Intake2.stop();
+ Intake3.stop();
+ chassis.drive_distance(13);
+ Solenoid.set(false);
+ chassis.turn_to_angle(0);
+ chassis.drive_distance(55);
+ chassis.turn_to_angle(90);
+ Intake1.spin(fwd, 100, pct);
+ Intake2.spin(fwd, 100, pct);
+ Intake3.spin(fwd, 100, pct);
+ chassis.drive_distance(20, 90, 12, 0.5, 1.8, 40, 2750);
 
  wait(1,sec);
  Intake3.stop();
 chassis.set_coordinates(0,0,90);
-*/
+
 }
 
 void left_side_sped_auton(){
