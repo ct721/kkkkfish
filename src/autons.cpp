@@ -513,7 +513,7 @@ void skills_auton(){
  chassis.turn_to_angle(282); //284
  chassis.drive_max_voltage = 4.5;
  chassis.swing_max_voltage = 8;
- chassis.drive_distance(-72, 287.2, 4.5, 0.5, 1.8, 40, 2750); //287
+ chassis.drive_distance(-68.5, 285, 4.5, 0.5, 1.8, 40, 2750); //287
  chassis.swing_timeout = 1500; chassis.right_swing_to_angle(90);
  Intake1.spin(fwd, 100, pct);
  Intake2.spin(fwd, 100, pct);
@@ -537,15 +537,20 @@ void skills_auton(){
  Intake1.stop();
  Intake2.stop();
  Intake3.stop();
+ 
+ /*
  chassis.drive_distance(13);
+ 
  Solenoid.set(false);
  chassis.turn_to_angle(0);
+ 
  chassis.drive_distance(55);
  chassis.turn_to_angle(90);
  Intake1.spin(fwd, 100, pct);
  Intake2.spin(fwd, 100, pct);
  Intake3.spin(fwd, 100, pct);
  chassis.drive_distance(20, 90, 12, 0.5, 1.8, 40, 2750);
+*/
 
  wait(1,sec);
  Intake3.stop();
